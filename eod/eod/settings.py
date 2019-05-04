@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import datetime
+EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(seconds=86400)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +27,7 @@ SECRET_KEY = 'vp-$ldla59m8d*qkug$_)=ahqp#r+9x!*d_^^t7i&=tb!5c*s&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['eod-backend.herokuapp.com','127.0.0.1:8000' ]
+ALLOWED_HOSTS = ['eod-backend.herokuapp.com','127.0.0.1' ]
 
 
 # Application definition
@@ -39,8 +41,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authapp.apps.AuthappConfig',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_expiring_authtoken',
     'corsheaders',
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_expiring_authtoken.authentication.ExpiringTokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated', )
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -110,6 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 
 
 # Internationalization
