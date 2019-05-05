@@ -6,5 +6,8 @@ from rest_framework_expiring_authtoken import views as rviews
 urlpatterns = [
     # Index
     path('hello/', views.HelloView.as_view(), name="Hello"),
-    path('api-token-auth/', rviews.obtain_expiring_auth_token, name='api_token_auth'),
+    # /get-token/
+    path('get-token/', rviews.obtain_expiring_auth_token, name='get_token'),
+    # /register/
+    path('register/', views.RegisterView.as_view(), name='register'),
 ]
