@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authapp.apps.AuthappConfig',
+    'unauthapp.apps.UnauthappConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_expiring_authtoken',

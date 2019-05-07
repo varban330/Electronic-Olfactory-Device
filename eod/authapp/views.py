@@ -11,21 +11,3 @@ class HelloView(APIView):
         string = 'Hello, ' + request.user.username + "!"
         content = {'message': string}
         return Response(content)
-
-class RegisterView(APIView):
-
-    def post(self, request):
-        try:
-            user = User()
-
-            # cleaned (normalised) data
-            user.username = request.data['username']
-            user.email = request.data['email']
-            pwd = request.data['password']
-            user.set_password(pwd)
-            user.save()
-            string = "Registration Successful"
-        except Exception as e:
-            string = "Sorry Registration could not be done"
-        content = {'message': string}
-        return Response(content)
