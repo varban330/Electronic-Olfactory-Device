@@ -23,5 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # /register/
     path('register/', views.RegisterView.as_view(), name='register'),
+    # /login/
+    path('login/', views.LoginView.as_view(), name='login'),
     path('', include('authapp.urls')),
 ]
