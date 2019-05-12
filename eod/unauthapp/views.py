@@ -7,30 +7,6 @@ from authapp.models import EndUser
 from rest_framework_expiring_authtoken import views as rviews
 # Create your views here.
 
-class RegisterView(APIView):
-    permission_classes = (AllowAny,)
-    def post(self, request):
-        try:
-            user = User()
-            # cleaned (normalised) data
-            user.username = request.data['username']
-            user.email = request.data['email']
-            pwd = request.data['password']
-            user.set_password(pwd)
-            user.save()
-            euser = EndUser()
-            euser.user = user
-            euser.is_admin = False
-            euser.save()
-            string = "Registration Successful"
-            code = 200
-        except Exception as e:
-            string = "Sorry Registration could not be done"
-            code = 400
-        content = {'message': string}
-        return Response(data=content, status = code)
-
-
 class LoginView(APIView):
     permission_classes = (AllowAny,)
     def post(self,request):
@@ -50,4 +26,31 @@ class LoginView(APIView):
         else:
             content = x.post(request).data
             code = x.post(request).status_code
+        return Response(data=content, status = code)
+
+
+class RegisterView(APIView):
+    permission_classes = (AllowAny,)
+    def post(self, request):
+        try:
+            user = User()
+            # cleaned (normalised) data
+            user.username = request.data['username']
+            user.email = request.data['email']
+            pwd = request.data['password']
+            user.set_password(pwd)
+            user.save()
+            euser = EndUser()
+            euser.user = user
+            euser.is_admin = False
+            euser.save()
+            string = "Registration Successful"
+            x = LoginView()
+            content = x.post(request).data
+            content["message"] = string
+            code = x.post(request).status_code
+        except Exception as e:
+            string = "Sorry Registration could not be done"
+            code = 400
+            content = {'message': string}
         return Response(data=content, status = code)
