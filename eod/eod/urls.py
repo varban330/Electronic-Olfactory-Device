@@ -25,5 +25,8 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     # /login/
     path('login/', views.LoginView.as_view(), name='login'),
+    # Authentication
     path('', include('authapp.urls')),
+    # Device App
+    path('device/', include('deviceapp.urls')),
 ]

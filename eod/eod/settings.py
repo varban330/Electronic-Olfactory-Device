@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authapp.apps.AuthappConfig',
     'unauthapp.apps.UnauthappConfig',
+    'deviceapp.apps.DeviceappConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_expiring_authtoken',
