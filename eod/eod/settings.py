@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'authapp.apps.AuthappConfig',
     'unauthapp.apps.UnauthappConfig',
     'deviceapp.apps.DeviceappConfig',
+    'complaintapp.apps.ComplaintappConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_expiring_authtoken',

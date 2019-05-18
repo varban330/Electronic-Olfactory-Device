@@ -29,4 +29,6 @@ urlpatterns = [
     path('', include('authapp.urls')),
     # Device App
     path('device/', include('deviceapp.urls')),
+    # Complaint App
+    path('complaint/', include('complaintapp.urls')),
 ]

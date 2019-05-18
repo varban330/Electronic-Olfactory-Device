@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class EndUser(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "user_id_euser")
     is_admin = models.BooleanField(default=False)
 
     def __str__(self):
