@@ -12,9 +12,9 @@ class Device(models.Model):
 
 class DeviceLog(models.Model):
     device = models.ForeignKey(Device, on_delete = models.CASCADE, related_name="device_id_log")
-    avg_temp = models.IntegerField()
-    avg_voc = models.IntegerField()
-    avg_pres = models.IntegerField()
+    avg_temp = models.FloatField()
+    avg_voc = models.FloatField()
+    avg_pres = models.FloatField()
     smell_class = models.CharField(max_length = 100)
 
     def __str__(self):
