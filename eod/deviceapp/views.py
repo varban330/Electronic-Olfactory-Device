@@ -130,7 +130,7 @@ class DeviceStatus(APIView):
     def post(self,request):
         try:
             device = Device.objects.filter(device_id = request.data["device_id"])[0]
-            log_generator(device)
+            # log_generator(device)
             device_status = DeviceLog.objects.filter(device = device)[0]
             content = {
             "device_id": device.device_id,
