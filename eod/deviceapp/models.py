@@ -16,6 +16,7 @@ class DeviceLog(models.Model):
     avg_voc = models.FloatField()
     avg_pres = models.FloatField()
     smell_class = models.CharField(max_length = 100)
+    pushed = models.BooleanField(default = False)
 
     def __str__(self):
         string = self.device.device_id + " -- " +self.smell_class

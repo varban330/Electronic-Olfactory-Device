@@ -7,7 +7,7 @@ from authapp.models import EndUser
 from .functions import log_generator
 
 api_key = '94cea4adae3c452ebd3c2ff10dd54d7c'
-# Create your views here.
+
 class RegisterDevice(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -106,6 +106,7 @@ class SendDeviceStatus(APIView):
                 device_status.avg_temp = request.data["avg_temp"]
                 device_status.avg_pres = request.data["avg_pres"]
                 device_status.avg_voc = request.data["avg_voc"]
+                device_status.pushed = False
                 device_status.save()
                 content = {
                 "message": "Logs Changed",
@@ -116,7 +117,7 @@ class SendDeviceStatus(APIView):
                 "message": "Sorry You can't send request to this source",
                 }
                 status = 401
-        except Exception as e:
+        except:
             content = {
             "message": "Error Occurred Send Correct Data",
             }
@@ -146,3 +147,35 @@ class DeviceStatus(APIView):
             }
             status = 400
         return Response(data = content, status = status)
+
+
+class PushNotifications(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        try:
+            x = EndUser.objects.filter(user = request.user)[0]
+            devices = Device.objects.filter(user = x)
+            content = {"message": "Nothing to Show"}
+            status = 404
+            for device in devices:
+                device_status = DeviceLog.objects.filter(device = device)[0]
+                if device_status.pushed == False and device_status.smell_class == "Isopropanol":
+                    content = {
+                        "device_id": device.device_id,
+                        "smell_class": device_status.smell_class,
+                        "avg_temp": device_status.avg_temp,
+                        "avg_pres": device_status.avg_pres,
+                        "avg_voc": device_status.avg_voc,
+                    }
+                    status = 200
+                    device_status.pushed = True
+                    device_status.save()
+        except:
+            content = {
+            "message": "An Error Occurred",
+            }
+            status = 400
+        return Response(data = content, status = status)
+
+            
