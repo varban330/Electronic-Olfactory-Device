@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Device, DeviceLog
+from .models import Device, DeviceLog, DangerLog
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from authapp.models import EndUser
 from .functions import log_generator
 
 api_key = '94cea4adae3c452ebd3c2ff10dd54d7c'
+
+dangerous = ["Isopropanol"]
 
 class RegisterDevice(APIView):
     permission_classes = (IsAuthenticated,)
@@ -108,6 +110,16 @@ class SendDeviceStatus(APIView):
                 device_status.avg_voc = request.data["avg_voc"]
                 device_status.pushed = False
                 device_status.save()
+                if request.data["smell_class"] in dangerous:
+                    dangerlog = DangerLog()
+                    dangerlog.device = device_status.device
+                    dangerlog.smell_class = request.data["smell_class"]
+                    dangerlog.avg_temp = request.data["avg_temp"]
+                    dangerlog.avg_pres = request.data["avg_pres"]
+                    dangerlog.avg_voc = request.data["avg_voc"]
+                    dangerlog.pushed = False
+                    dangerlog.save()
+
                 content = {
                 "message": "Logs Changed",
                 }
@@ -159,23 +171,30 @@ class PushNotifications(APIView):
             content = {"message": "Nothing to Show"}
             status = 404
             for device in devices:
-                device_status = DeviceLog.objects.filter(device = device)[0]
-                if device_status.pushed == False and device_status.smell_class == "Isopropanol":
+                device_statuses = DangerLog.objects.filter(device = device)
+                notification_list = []
+                for device_status in device_statuses:
+                    if device_status.pushed == False and device_status.smell_class in dangerous:
+                        content = {
+                            "device_id": device.device_id,
+                            "smell_class": device_status.smell_class,
+                            "avg_temp": device_status.avg_temp,
+                            "avg_pres": device_status.avg_pres,
+                            "avg_voc": device_status.avg_voc,
+                            "timestamp": device_status.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
+                        }
+                        device_status.pushed = True
+                        device_status.save()
+                        notification_list.append(content)
+
+                if len(notification_list)>0:
                     content = {
-                        "device_id": device.device_id,
-                        "smell_class": device_status.smell_class,
-                        "avg_temp": device_status.avg_temp,
-                        "avg_pres": device_status.avg_pres,
-                        "avg_voc": device_status.avg_voc,
+                        "notifications": notification_list
                     }
                     status = 200
-                    device_status.pushed = True
-                    device_status.save()
         except:
             content = {
             "message": "An Error Occurred",
             }
             status = 400
         return Response(data = content, status = status)
-
-            

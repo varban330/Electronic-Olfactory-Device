@@ -21,3 +21,16 @@ class DeviceLog(models.Model):
     def __str__(self):
         string = self.device.device_id + " -- " +self.smell_class
         return string
+
+class DangerLog(models.Model):
+    device = models.ForeignKey(Device, on_delete = models.CASCADE, related_name="danger_id_log")
+    avg_temp = models.FloatField()
+    avg_voc = models.FloatField()
+    avg_pres = models.FloatField()
+    smell_class = models.CharField(max_length = 100)
+    pushed = models.BooleanField(default = False)
+    timestamp = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        string = self.device.device_id + " -- " +self.smell_class
+        return string
