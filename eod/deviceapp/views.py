@@ -168,8 +168,6 @@ class PushNotifications(APIView):
         try:
             x = EndUser.objects.filter(user = request.user)[0]
             devices = Device.objects.filter(user = x)
-            content = {"notifications": []]}
-            status = 200
             for device in devices:
                 device_statuses = DangerLog.objects.filter(device = device)
                 notification_list = []
@@ -187,11 +185,10 @@ class PushNotifications(APIView):
                         device_status.save()
                         notification_list.append(content)
 
-                if len(notification_list)>0:
-                    content = {
-                        "notifications": notification_list
-                    }
-                    status = 200
+                content = {
+                    "notifications": notification_list
+                }
+                status = 200
         except:
             content = {
             "message": "An Error Occurred",
