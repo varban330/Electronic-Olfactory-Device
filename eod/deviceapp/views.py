@@ -168,8 +168,8 @@ class PushNotifications(APIView):
         try:
             x = EndUser.objects.filter(user = request.user)[0]
             devices = Device.objects.filter(user = x)
-            content = {"message": "Nothing to Show"}
-            status = 404
+            content = {"notifications": []]}
+            status = 200
             for device in devices:
                 device_statuses = DangerLog.objects.filter(device = device)
                 notification_list = []
