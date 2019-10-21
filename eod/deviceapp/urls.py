@@ -16,5 +16,7 @@ urlpatterns = [
     path('send-status/', views.SendDeviceStatus.as_view(), name="send-status"),
     # /push-notification/
     path('push-notification/', views.PushNotifications.as_view(), name="push-notification"),
+    # /push-notification-history/
+    path('push-notification-history/', views.PushNotificationHistory.as_view(), name="push-notification-history"),
 
 ]

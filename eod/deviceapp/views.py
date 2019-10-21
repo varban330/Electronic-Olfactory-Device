@@ -168,9 +168,11 @@ class PushNotifications(APIView):
         try:
             x = EndUser.objects.filter(user = request.user)[0]
             devices = Device.objects.filter(user = x)
+            notification_list = []
             for device in devices:
                 device_statuses = DangerLog.objects.filter(device = device)
-                notification_list = []
+                print(device)
+                print(device_statuses)
                 for device_status in device_statuses:
                     if device_status.pushed == False and device_status.smell_class in dangerous:
                         content = {
@@ -184,6 +186,41 @@ class PushNotifications(APIView):
                         device_status.pushed = True
                         device_status.save()
                         notification_list.append(content)
+                print(notification_list)
+
+                content = {
+                    "notifications": notification_list
+                }
+                status = 200
+        except:
+            content = {
+            "message": "An Error Occurred",
+            }
+            status = 400
+        return Response(data = content, status = status)
+
+
+class PushNotificationHistory(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        try:
+            x = EndUser.objects.filter(user = request.user)[0]
+            devices = Device.objects.filter(user = x)
+            notification_list = []
+            for device in devices:
+                device_statuses = DangerLog.objects.filter(device = device)
+                for device_status in device_statuses:
+                    content = {
+                        "device_id": device.device_id,
+                        "smell_class": device_status.smell_class,
+                        "avg_temp": device_status.avg_temp,
+                        "avg_pres": device_status.avg_pres,
+                        "avg_voc": device_status.avg_voc,
+                        "timestamp": device_status.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
+                    }
+                    notification_list.append(content)
+                print(notification_list)
 
                 content = {
                     "notifications": notification_list
