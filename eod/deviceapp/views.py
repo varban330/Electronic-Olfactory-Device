@@ -222,6 +222,7 @@ class PushNotificationHistory(APIView):
                     notification_list.append(content)
                 print(notification_list)
 
+                notification_list = sorted(notification_list, key = lambda i: i['timestamp'],reverse=True)
                 content = {
                     "notifications": notification_list
                 }
