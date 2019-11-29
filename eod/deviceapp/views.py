@@ -107,7 +107,11 @@ class SendDeviceStatus(APIView):
                 device_status.smell_class = request.data["smell_class"]
                 device_status.avg_temp = request.data["avg_temp"]
                 device_status.avg_pres = request.data["avg_pres"]
-                device_status.avg_voc = request.data["avg_voc"]
+                # To be changed
+                device_status.avg_co = request.data["avg_voc"]
+                device_status.avg_lpg = request.data["avg_voc"]
+                device_status.avg_smoke = request.data["avg_voc"]
+                # end
                 device_status.pushed = False
                 device_status.save()
                 if request.data["smell_class"] in dangerous:
@@ -116,7 +120,11 @@ class SendDeviceStatus(APIView):
                     dangerlog.smell_class = request.data["smell_class"]
                     dangerlog.avg_temp = request.data["avg_temp"]
                     dangerlog.avg_pres = request.data["avg_pres"]
-                    dangerlog.avg_voc = request.data["avg_voc"]
+                    # To be changed
+                    dangerlog.avg_co = request.data["avg_voc"]
+                    dangerlog.avg_lpg = request.data["avg_voc"]
+                    dangerlog.avg_smoke = request.data["avg_voc"]
+                    # end
                     dangerlog.pushed = False
                     dangerlog.save()
 
@@ -150,7 +158,12 @@ class DeviceStatus(APIView):
             "smell_class": device_status.smell_class,
             "avg_temp": device_status.avg_temp,
             "avg_pres": device_status.avg_pres,
-            "avg_voc": device_status.avg_voc,
+            # To be changed
+            "avg_voc": 20,
+            # end
+            "avg_co": device_status.avg_co,
+            "avg_lpg": device_status.avg_lpg,
+            "avg_smoke": device_status.avg_smoke,
             }
             status = 200
         except:
@@ -180,7 +193,12 @@ class PushNotifications(APIView):
                             "smell_class": device_status.smell_class,
                             "avg_temp": device_status.avg_temp,
                             "avg_pres": device_status.avg_pres,
-                            "avg_voc": device_status.avg_voc,
+                            # To be changed
+                            "avg_voc": 20,
+                            # end
+                            "avg_co": device_status.avg_co,
+                            "avg_lpg": device_status.avg_lpg,
+                            "avg_smoke": device_status.avg_smoke,
                             "timestamp": device_status.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
                         }
                         device_status.pushed = True
@@ -216,7 +234,12 @@ class PushNotificationHistory(APIView):
                         "smell_class": device_status.smell_class,
                         "avg_temp": device_status.avg_temp,
                         "avg_pres": device_status.avg_pres,
-                        "avg_voc": device_status.avg_voc,
+                        # To be changed
+                        "avg_voc": 20,
+                        # end
+                        "avg_co": device_status.avg_co,
+                        "avg_lpg": device_status.avg_lpg,
+                        "avg_smoke": device_status.avg_smoke,
                         "timestamp": device_status.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
                     }
                     notification_list.append(content)

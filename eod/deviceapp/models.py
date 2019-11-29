@@ -13,7 +13,9 @@ class Device(models.Model):
 class DeviceLog(models.Model):
     device = models.ForeignKey(Device, on_delete = models.CASCADE, related_name="device_id_log")
     avg_temp = models.FloatField()
-    avg_voc = models.FloatField()
+    avg_co = models.FloatField(default = 0.0)
+    avg_lpg = models.FloatField(default = 0.0)
+    avg_smoke = models.FloatField(default = 0.0)
     avg_pres = models.FloatField()
     smell_class = models.CharField(max_length = 100)
     pushed = models.BooleanField(default = False)
@@ -25,7 +27,9 @@ class DeviceLog(models.Model):
 class DangerLog(models.Model):
     device = models.ForeignKey(Device, on_delete = models.CASCADE, related_name="danger_id_log")
     avg_temp = models.FloatField()
-    avg_voc = models.FloatField()
+    avg_co = models.FloatField(default = 0.0)
+    avg_lpg = models.FloatField(default = 0.0)
+    avg_smoke = models.FloatField(default = 0.0)
     avg_pres = models.FloatField()
     smell_class = models.CharField(max_length = 100)
     pushed = models.BooleanField(default = False)
