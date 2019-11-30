@@ -1,3 +1,4 @@
+import pytz
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Device, DeviceLog, DangerLog
@@ -5,6 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from authapp.models import EndUser
 from .functions import log_generator
+
+tz = pytz.timezone('Asia/Kolkata')
 
 api_key = '94cea4adae3c452ebd3c2ff10dd54d7c'
 
@@ -107,11 +110,9 @@ class SendDeviceStatus(APIView):
                 device_status.smell_class = request.data["smell_class"]
                 device_status.avg_temp = request.data["avg_temp"]
                 device_status.avg_pres = request.data["avg_pres"]
-                # To be changed
-                device_status.avg_co = request.data["avg_voc"]
-                device_status.avg_lpg = request.data["avg_voc"]
-                device_status.avg_smoke = request.data["avg_voc"]
-                # end
+                device_status.avg_co = request.data["avg_co"]
+                device_status.avg_lpg = request.data["avg_lpg"]
+                device_status.avg_smoke = request.data["avg_smoke"]
                 device_status.pushed = False
                 device_status.save()
                 if request.data["smell_class"] in dangerous:
@@ -120,11 +121,9 @@ class SendDeviceStatus(APIView):
                     dangerlog.smell_class = request.data["smell_class"]
                     dangerlog.avg_temp = request.data["avg_temp"]
                     dangerlog.avg_pres = request.data["avg_pres"]
-                    # To be changed
-                    dangerlog.avg_co = request.data["avg_voc"]
-                    dangerlog.avg_lpg = request.data["avg_voc"]
-                    dangerlog.avg_smoke = request.data["avg_voc"]
-                    # end
+                    dangerlog.avg_co = request.data["avg_co"]
+                    dangerlog.avg_lpg = request.data["avg_lpg"]
+                    dangerlog.avg_smoke = request.data["avg_smoke"]
                     dangerlog.pushed = False
                     dangerlog.save()
 
@@ -158,9 +157,6 @@ class DeviceStatus(APIView):
             "smell_class": device_status.smell_class,
             "avg_temp": device_status.avg_temp,
             "avg_pres": device_status.avg_pres,
-            # To be changed
-            "avg_voc": 20,
-            # end
             "avg_co": device_status.avg_co,
             "avg_lpg": device_status.avg_lpg,
             "avg_smoke": device_status.avg_smoke,
@@ -193,13 +189,10 @@ class PushNotifications(APIView):
                             "smell_class": device_status.smell_class,
                             "avg_temp": device_status.avg_temp,
                             "avg_pres": device_status.avg_pres,
-                            # To be changed
-                            "avg_voc": 20,
-                            # end
                             "avg_co": device_status.avg_co,
                             "avg_lpg": device_status.avg_lpg,
                             "avg_smoke": device_status.avg_smoke,
-                            "timestamp": device_status.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
+                            "timestamp": device_status.timestamp.astimezone(tz).strftime("%d/%m/%Y, %H:%M:%S")
                         }
                         device_status.pushed = True
                         device_status.save()
@@ -234,13 +227,10 @@ class PushNotificationHistory(APIView):
                         "smell_class": device_status.smell_class,
                         "avg_temp": device_status.avg_temp,
                         "avg_pres": device_status.avg_pres,
-                        # To be changed
-                        "avg_voc": 20,
-                        # end
                         "avg_co": device_status.avg_co,
                         "avg_lpg": device_status.avg_lpg,
                         "avg_smoke": device_status.avg_smoke,
-                        "timestamp": device_status.timestamp.strftime("%d/%m/%Y, %H:%M:%S")
+                        "timestamp": device_status.timestamp.astimezone(tz).strftime("%d/%m/%Y, %H:%M:%S")
                     }
                     notification_list.append(content)
                 print(notification_list)
