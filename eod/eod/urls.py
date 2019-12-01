@@ -31,4 +31,6 @@ urlpatterns = [
     path('device/', include('deviceapp.urls')),
     # Complaint App
     path('complaint/', include('complaintapp.urls')),
+    # ML App
+    path('ml/', include('mlapp.urls')),
 ]
