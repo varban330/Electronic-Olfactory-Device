@@ -1,44 +1,44 @@
 import requests
 import json
 import random
-import serial
-import RPi.GPIO as gp
+# import serial
+# import RPi.GPIO as gp
 import time
 from datetime import datetime
 import pandas as pd
 import sys
 
-# def random_generator():
-#     data = {
-#     "temp": round(random.uniform(0,40),2),
-#     "pres": round(random.uniform(90000,100000),2),
-#     "co": int(random.uniform(0,10)),
-#     "lpg": int(random.uniform(0,10)),
-#     "smoke": int(random.uniform(0,10))
-#     }
-#     return data
+def random_generator():
+    data = {
+    "temp": round(random.uniform(0,40),2),
+    "pres": round(random.uniform(90000,100000),2),
+    "co": int(random.uniform(0,10)),
+    "lpg": int(random.uniform(0,10)),
+    "smoke": int(random.uniform(0,10))
+    }
+    return data
 
 def log_generator():
     smell_classes = ["Air", "Lime", "Vodka", "Beer", "Vinegar", "Wine", "Acetone", "Ethanol", "Isopropanol"]
     smell_class = random.choice(smell_classes)
     return smell_class
 
-try:
-    ser=serial.Serial("/dev/ttyACM1",9600)
-except:
-    ser=serial.Serial("/dev/ttyACM0",9600)
-ser.baudrate=9600
-
-gp.setmode(gp.BOARD)
+# try:
+#     ser=serial.Serial("/dev/ttyACM1",9600)
+# except:
+#     ser=serial.Serial("/dev/ttyACM0",9600)
+# ser.baudrate=9600
+#
+# gp.setmode(gp.BOARD)
 while True:
     x = datetime.now()
     try:
         rows = list()
         for i in range(1,61):
-            read_ser=ser.readline()
-            temp_string = read_ser.decode('utf-8')
-            temp_data = eval(temp_string[:-2])
-            # temp_data = random_generator()
+            # read_ser=ser.readline()
+            # temp_string = read_ser.decode('utf-8')
+            # temp_data = eval(temp_string[:-2])
+            temp_data = random_generator()
             temp_data["time"] = i
             print(temp_data)
             row = [temp_data["time"], temp_data["temp"], temp_data["pres"], temp_data["co"], temp_data["lpg"], temp_data["smoke"]]
