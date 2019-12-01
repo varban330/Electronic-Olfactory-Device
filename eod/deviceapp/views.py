@@ -5,7 +5,8 @@ from .models import Device, DeviceLog, DangerLog
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from authapp.models import EndUser
-from .functions import log_generator
+from .functions import log_generator, save_device_status
+from datetime import datetime
 
 tz = pytz.timezone('Asia/Kolkata')
 
@@ -99,34 +100,7 @@ class SendDeviceStatus(APIView):
 
     def post(self,request):
         try:
-            if request.META["HTTP_OCP_APIM_SUBSCRIPTION_KEY"] == api_key:
-                device = Device.objects.filter(device_id = request.data["device_id"])[0]
-                filter_list = DeviceLog.objects.filter(device = device)
-                if filter_list:
-                    device_status = filter_list[0]
-                else:
-                    device_status = DeviceLog()
-                    device_status.device = device
-                device_status.smell_class = request.data["smell_class"]
-                device_status.avg_temp = request.data["avg_temp"]
-                device_status.avg_pres = request.data["avg_pres"]
-                device_status.avg_co = request.data["avg_co"]
-                device_status.avg_lpg = request.data["avg_lpg"]
-                device_status.avg_smoke = request.data["avg_smoke"]
-                device_status.pushed = False
-                device_status.save()
-                if request.data["smell_class"] in dangerous:
-                    dangerlog = DangerLog()
-                    dangerlog.device = device_status.device
-                    dangerlog.smell_class = request.data["smell_class"]
-                    dangerlog.avg_temp = request.data["avg_temp"]
-                    dangerlog.avg_pres = request.data["avg_pres"]
-                    dangerlog.avg_co = request.data["avg_co"]
-                    dangerlog.avg_lpg = request.data["avg_lpg"]
-                    dangerlog.avg_smoke = request.data["avg_smoke"]
-                    dangerlog.pushed = False
-                    dangerlog.save()
-
+            if request.META["HTTP_OCP_APIM_SUBSCRIPTION_KEY"] == api_key and save_device_status(request.data):
                 content = {
                 "message": "Logs Changed",
                 }
@@ -235,7 +209,7 @@ class PushNotificationHistory(APIView):
                     notification_list.append(content)
                 print(notification_list)
 
-                notification_list = sorted(notification_list, key = lambda i: i['timestamp'],reverse=True)
+                notification_list = sorted(notification_list, key = lambda i: datetime.strptime(i['timestamp'], "%d/%m/%Y, %H:%M:%S"),reverse=True)
                 content = {
                     "notifications": notification_list
                 }

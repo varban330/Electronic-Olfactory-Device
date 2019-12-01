@@ -1,7 +1,8 @@
-from .models import Device, DeviceLog
+from .models import Device, DeviceLog, DangerLog
 import random
 
 smell_classes = ["Air", "Lime", "Vodka", "Beer", "Vinegar", "Wine", "Acetone", "Ethanol", "Isopropanol"]
+dangerous = ["Isopropanol"]
 def log_generator(device):
     DeviceLog.objects.filter(device = device).delete()
     log = DeviceLog()
@@ -14,3 +15,32 @@ def log_generator(device):
     log.avg_pres = round(avg_pres,2)
     log.smell_class = random.choice(smell_classes)
     log.save()
+
+def save_device_status(request):
+    device = Device.objects.filter(device_id = request["device_id"])[0]
+    filter_list = DeviceLog.objects.filter(device = device)
+    if filter_list:
+        device_status = filter_list[0]
+    else:
+        device_status = DeviceLog()
+        device_status.device = device
+    device_status.smell_class = request["smell_class"]
+    device_status.avg_temp = request["avg_temp"]
+    device_status.avg_pres = request["avg_pres"]
+    device_status.avg_co = request["avg_co"]
+    device_status.avg_lpg = request["avg_lpg"]
+    device_status.avg_smoke = request["avg_smoke"]
+    device_status.pushed = False
+    device_status.save()
+    if request["smell_class"] in dangerous:
+        dangerlog = DangerLog()
+        dangerlog.device = device_status.device
+        dangerlog.smell_class = request["smell_class"]
+        dangerlog.avg_temp = request["avg_temp"]
+        dangerlog.avg_pres = request["avg_pres"]
+        dangerlog.avg_co = request["avg_co"]
+        dangerlog.avg_lpg = request["avg_lpg"]
+        dangerlog.avg_smoke = request["avg_smoke"]
+        dangerlog.pushed = False
+        dangerlog.save()
+    return True
