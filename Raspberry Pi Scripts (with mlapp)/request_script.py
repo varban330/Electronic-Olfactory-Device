@@ -5,7 +5,6 @@ import serial
 import RPi.GPIO as gp
 import time
 from datetime import datetime
-import pandas as pd
 import sys
 
 # def random_generator():
@@ -26,7 +25,7 @@ ser.baudrate=9600
 
 gp.setmode(gp.BOARD)
 while True:
-    x = datetime.now()
+    y = datetime.now()
     try:
         rows = list()
         for i in range(1,61):
@@ -53,8 +52,15 @@ while True:
                print("--------------------------------------------------------")
                print("Request Successful")
                print(r.json())
+               x = r.json()
+               if "category" in x.keys() and x["category"] == "Dangerous":
+                   print("Buzzer Bjaao")
+               elif "category" in x.keys() and x["category"] == "Normal":
+                   print("Sab theek h")
+               else:
+                   print("Kuch gdbd h... Key nhi aayi")
                print("Total Time Taken (in Seconds)")
-               print((datetime.now() - x).seconds)
+               print((datetime.now() - y).seconds)
                print("--------------------------------------------------------")
     except KeyboardInterrupt:
         sys.exit(0)
