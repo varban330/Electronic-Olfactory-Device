@@ -12,4 +12,5 @@ class Complaint(models.Model):
     is_resolved = models.BooleanField(default = False)
 
     def __str__(self):
-        string = int(self.pk) + self.user.user.username + "--" + self.type
+        string = str(self.pk) + self.user.user.username + "--" + self.type
+        return string
