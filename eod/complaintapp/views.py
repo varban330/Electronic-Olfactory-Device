@@ -51,7 +51,7 @@ class GetComplaints(APIView):
         x = EndUser.objects.filter(user = request.user)[0]
         if x.is_admin:
             complaints = Complaint.objects.all()
-            complaint_list = [[c.pk, c.user.user.username,c.type, c.device.device_id, c.is_resolved] for c in complaints]
+            complaint_list = [{"id": c.pk, "username": c.user.user.username, "type": c.type, "device_id": c.device.device_id,"status": c.is_resolved} for c in complaints]
             message = complaint_list
             code =200
         else:
