@@ -1,8 +1,8 @@
 import requests
 import json
 import random
-# import serial
-# import RPi.GPIO as gp
+import serial
+import RPi.GPIO as gp
 import time
 from datetime import datetime
 import sys
@@ -18,33 +18,36 @@ def random_generator():
     }
     return data
 
-# try:
-#     ser=serial.Serial("/dev/ttyACM1",9600)
-# except:
-#     ser=serial.Serial("/dev/ttyACM0",9600)
-# ser.baudrate=9600
-#
-# gp.setmode(gp.BOARD)
+try:
+    ser=serial.Serial("/dev/ttyACM1",9600)
+except:
+    ser=serial.Serial("/dev/ttyACM0",9600)
+ser.baudrate=9600
+
+gp.setmode(gp.BOARD)
 smell_class = input("Enter Smell Class: ")
 x = 1
 y = 1
+id = 1
 now = int(datetime.timestamp(datetime.now()))
 print(str(smell_class)+'_'+str(now)+'.csv')
-keys = ["time","temp","pres", "co", "lpg", "smoke"]
+keys = ["id","time","temp","pres", "co", "lpg", "smoke"]
 try:
     with open(str(smell_class)+'_'+str(now)+'.csv', 'w') as output_file:
         dict_writer = csv.DictWriter(output_file, fieldnames = keys)
         dict_writer.writeheader()
-        for i in range(1,5401):
+        for i in range(1,5404):
             if x>60:
                 x = 1
+                id = id + 1
             try:
-                # read_ser=ser.readline()
-                # temp_string = read_ser.decode('utf-8')
-                # temp_data = eval(temp_string[:-2])
-                temp_data = random_generator()
+                read_ser=ser.readline()
+                temp_string = read_ser.decode('utf-8')
+                temp_data = eval(temp_string[:-2])
+                # temp_data = random_generator()
                 temp_data["time"] = x
                 data = {
+                "id": id,
                 "time":temp_data["time"],
                 "temp":temp_data["temp"],
                 "pres":temp_data["pres"],
