@@ -50,7 +50,11 @@ class GetComplaints(APIView):
     def get(self, request):
         x = EndUser.objects.filter(user = request.user)[0]
         if x.is_admin:
-            complaints = Complaint.objects.all()
+            data = dict(request.query_params)
+            if "type" in data.keys():
+                complaints = Complaint.objects.filter(type = data["type"][0])
+            else:
+                complaints = Complaint.objects.all()
             complaint_list = list()
             for c in complaints:
                 if c.type == "device":

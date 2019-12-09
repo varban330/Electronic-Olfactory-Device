@@ -1,8 +1,8 @@
 from .models import Device, DeviceLog, DangerLog
 import random
 
-smell_classes = ["Air", "Lime", "Vodka", "Beer", "Vinegar", "Wine", "Acetone", "Ethanol", "Isopropanol"]
-dangerous = ["Isopropanol"]
+smell_classes = ["Air", "Vinegar", "Acetone", "Ethanol"]
+dangerous = ["Ethanol"]
 def log_generator(device):
     DeviceLog.objects.filter(device = device).delete()
     log = DeviceLog()

@@ -12,7 +12,7 @@ tz = pytz.timezone('Asia/Kolkata')
 
 api_key = '94cea4adae3c452ebd3c2ff10dd54d7c'
 
-dangerous = ["Isopropanol"]
+dangerous = ["Ethanol"]
 
 class RegisterDevice(APIView):
     permission_classes = (IsAuthenticated,)

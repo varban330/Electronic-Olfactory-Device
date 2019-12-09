@@ -1,9 +1,9 @@
 import random
 import pandas as pd
 
-dangerous = ["Isopropanol"]
+dangerous = ["Ethanol"]
 def predict_class(dataframe):
-    smell_classes = ["Air", "Lime", "Vodka", "Beer", "Vinegar", "Wine", "Acetone", "Ethanol", "Isopropanol"]
+    smell_classes = ["Air", "Vinegar", "Acetone", "Ethanol"]
     smell_class = random.choice(smell_classes)
 
     if smell_class in dangerous:
