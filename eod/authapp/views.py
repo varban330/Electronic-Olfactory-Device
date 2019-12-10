@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from .models import EndUser
 
@@ -40,3 +41,27 @@ class RegisterAdminView(APIView):
             code = 400
         content = {'message': string}
         return Response(data=content, status = code)
+
+
+class ChangePwd(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+            try:
+                username = request.user.username
+                user_profile = EndUser.objects.filter(user = request.user)[0]
+                password = request.data["password"]
+                user = authenticate(username = username, password = password)
+                if user is not None:
+                    pwd = request.data['new_password']
+                    user.set_password(pwd)
+                    user.save()
+                    content = {"message: Password Changed Successfully"}
+                    code = 200
+                else:
+                    content = {"message: Incorrect Password"}
+                    code = 401
+            except:
+                content = {"message: Some Error Occured"}
+                code = 500
+            return Response(data = content, status = code)

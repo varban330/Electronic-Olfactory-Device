@@ -25,6 +25,10 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     # /login/
     path('login/', views.LoginView.as_view(), name='login'),
+    # /forgot-pwd-request/
+    path('forgot-pwd-request/', views.ForgotAPIView.as_view(), name='forgot-pwd-request'),
+    # /reset-pwd-request/
+    path('reset-pwd-request/', views.ResetPassword.as_view(), name='reset-pwd-request'),
     # Authentication
     path('', include('authapp.urls')),
     # Device App

@@ -8,5 +8,7 @@ urlpatterns = [
     path('hello/', views.HelloView.as_view(), name="Hello"),
     # /register-admin/
     path('register-admin/', views.RegisterAdminView.as_view(), name='register-admin'),
+    # /change-password/
+    path('change-password/', views.ChangePwd.as_view(), name='change-pwd'),
 
 ]
