@@ -1,5 +1,6 @@
 import base64
 from datetime import datetime
+from django.views.generic import View
 from django.shortcuts import render
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
@@ -71,8 +72,9 @@ class ForgotAPIView(APIView):
             message = user.username + ":" +get_secret_number(user.username)+":"+str(int(datetime.timestamp(datetime.now())))
             encodedBytes = base64.b64encode(message.encode("utf-8"))
             encoded_message = str(encodedBytes, "utf-8")
+            message_string = "Hey "+user.username+",\nThis is your password reset link:\n" +"https://eod-backend.herokuapp.com/reset-pwd/?secret_key=" + encoded_message +"\nRegards\nEOD Team"
             new_email = email_anonymizer(email)
-            if send_mail(email, encoded_message):
+            if send_mail(email, message_string):
                 return Response(data={'message': "Mail Sent Successfully", 'email':new_email}, status = 200)
             else:
                 return Response(data={'message': "Error Occurred. Try Again Later"}, status = 500)
@@ -86,6 +88,7 @@ class ResetPassword(APIView):
     def post(self,request):
         try:
             key = request.data["secret_key"]
+            print(key)
             data = base64.b64decode(key)
             data = data.decode("utf-8")
             data = data.split(":")
@@ -100,3 +103,18 @@ class ResetPassword(APIView):
             return Response(data={'message': "Password Reset Successful"}, status = 200)
         except:
             return Response(data={'message': "Error"}, status = 400)
+
+
+class ResetPwdView(View):
+    template_name = 'unauthapp/index.html'
+
+    def get(self,request):
+        context = {"key":request.GET.get("secret_key")}
+        return render(request, self.template_name,context)
+
+
+class ThanksView(View):
+    template_name = 'unauthapp/thanks.html'
+
+    def get(self,request):
+        return render(request, self.template_name)

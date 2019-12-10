@@ -29,6 +29,10 @@ urlpatterns = [
     path('forgot-pwd-request/', views.ForgotAPIView.as_view(), name='forgot-pwd-request'),
     # /reset-pwd-request/
     path('reset-pwd-request/', views.ResetPassword.as_view(), name='reset-pwd-request'),
+    # /reset-pwd/
+    path('reset-pwd/', views.ResetPwdView.as_view(), name='reset-pwd'),
+    # /reset-pwd/
+    path('thanks/', views.ThanksView.as_view(), name='thanks'),
     # Authentication
     path('', include('authapp.urls')),
     # Device App
