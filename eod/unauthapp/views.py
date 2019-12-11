@@ -11,6 +11,8 @@ from rest_framework_expiring_authtoken import views as rviews
 from .functions import send_mail, get_secret_number, check_secret_number, email_anonymizer,active_token
 # Create your views here.
 
+api_key = '94cea4adae3c452ebd3c2ff10dd54d7c'
+
 class LoginView(APIView):
     permission_classes = (AllowAny,)
     def post(self,request):
@@ -87,20 +89,23 @@ class ResetPassword(APIView):
 
     def post(self,request):
         try:
-            key = request.data["secret_key"]
-            print(key)
-            data = base64.b64decode(key)
-            data = data.decode("utf-8")
-            data = data.split(":")
-            user = User.objects.get(username = data[0])
-            if user is None or not check_secret_number(data[0],data[1]):
-                return Response(data={'message': "Try Again. Unauthorised"}, status = 401)
-            if not active_token(data[2]):
-                return Response(data={'message': "Expired"}, status = 498)
-            pwd = request.data['password']
-            user.set_password(pwd)
-            user.save()
-            return Response(data={'message': "Password Reset Successful"}, status = 200)
+            if request.META["HTTP_OCP_APIM_SUBSCRIPTION_KEY"] == api_key:
+                key = request.data["secret_key"]
+                print(key)
+                data = base64.b64decode(key)
+                data = data.decode("utf-8")
+                data = data.split(":")
+                user = User.objects.get(username = data[0])
+                if user is None or not check_secret_number(data[0],data[1]):
+                    return Response(data={'message': "Try Again. Unauthorised"}, status = 401)
+                if not active_token(data[2]):
+                    return Response(data={'message': "Expired"}, status = 498)
+                pwd = request.data['password']
+                user.set_password(pwd)
+                user.save()
+                return Response(data={'message': "Password Reset Successful"}, status = 200)
+            else:
+                return Response(data={'message': "You are not authorised to perform this action"}, status = 401)
         except:
             return Response(data={'message': "Error"}, status = 400)
 

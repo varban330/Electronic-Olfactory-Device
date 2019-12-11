@@ -104,7 +104,7 @@ function btnclick(){
       console.log("Data is ok", data);
       snackbarfunc(data["message"])
       if(data["message"] == "Password Reset Successful"){
-        setTimeout(function(){window.location.href = "/thanks/";}, 5000);
+        setTimeout(function(){window.location.href = "/thanks/";}, 2250);
       }
     }).catch(function(ex) {
       console.log("parsing failed", ex);
