@@ -59,7 +59,7 @@ try:
                 dict_writer.writerow(data)
                 x += 1
                 y += 1
-                time.sleep(1)
+                time.sleep(0.5)
             except KeyboardInterrupt:
                 sys.exit(0)
             except:
