@@ -34,6 +34,7 @@ class RegisterComplaint(APIView):
                     complaint.type = complaint_type
                     complaint.user = x
                     complaint.desc = request.data["desc"]
+                    complaint.device = None
                     complaint.save()
                     message = "App or Other Complaint Registered Successfully"
                     code = 200
