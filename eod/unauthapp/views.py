@@ -70,13 +70,16 @@ class ForgotAPIView(APIView):
             user = User.objects.get(username = request.data["username"])
             if user is None:
                 return Response(data={'message': string}, status = 404)
+            euser = EndUser.objects.filter(user = user)[0]
             email = user.email
             message = user.username + ":" +get_secret_number(user.username)+":"+str(int(datetime.timestamp(datetime.now())))
             encodedBytes = base64.b64encode(message.encode("utf-8"))
             encoded_message = str(encodedBytes, "utf-8")
-            message_string = "Hey "+user.username+",\nThis is your password reset link:\n" +"https://eod-backend.herokuapp.com/reset-pwd/?secret_key=" + encoded_message +"\nRegards\nEOD Team"
+            message_string = "Hey "+user.username+",\nThis is your password reset link:\n" +"https://eod-backend.herokuapp.com/reset-pwd/?key=" + encoded_message +"\nRegards\nEOD Team"
             new_email = email_anonymizer(email)
             if send_mail(email, message_string):
+                euser.reset_status = True
+                euser.save()
                 return Response(data={'message': "Mail Sent Successfully", 'email':new_email}, status = 200)
             else:
                 return Response(data={'message': "Error Occurred. Try Again Later"}, status = 500)
@@ -103,6 +106,11 @@ class ResetPassword(APIView):
                 pwd = request.data['password']
                 user.set_password(pwd)
                 user.save()
+                euser = EndUser.objects.filter(user = user)[0]
+                if not euser.reset_status:
+                    return Response(data={'message': "Try Again. Unauthorised"}, status = 401)
+                euser.reset_status = False
+                euser.save()
                 return Response(data={'message': "Password Reset Successful"}, status = 200)
             else:
                 return Response(data={'message': "You are not authorised to perform this action"}, status = 401)
@@ -112,10 +120,31 @@ class ResetPassword(APIView):
 
 class ResetPwdView(View):
     template_name = 'unauthapp/index.html'
+    failed_template_name = 'unauthapp/sorry.html'
 
     def get(self,request):
-        context = {"key":request.GET.get("secret_key")}
-        return render(request, self.template_name,context)
+        try:
+            key = request.GET.get("key")
+            data = base64.b64decode(key)
+            data = data.decode("utf-8")
+            data = data.split(":")
+            user = User.objects.get(username = data[0])
+            if user is None or not check_secret_number(data[0],data[1]):
+                context = {"message":"Try Again. Unauthorised"}
+                return render(request, self.failed_template_name,context)
+            if not active_token(data[2]):
+                context = {"message":"Try Again. Link has Expired"}
+                return render(request, self.failed_template_name,context)
+            euser = EndUser.objects.filter(user = user)[0]
+            if euser.reset_status:
+                context = {"key":key}
+                return render(request, self.template_name,context)
+            else:
+                context = {"message":"Try Again. Unauthorised"}
+                return render(request, self.failed_template_name,context)
+        except:
+            context = {"message":"Error Occurred. Contact Support"}
+            return render(request, self.failed_template_name,context)
 
 
 class ThanksView(View):
