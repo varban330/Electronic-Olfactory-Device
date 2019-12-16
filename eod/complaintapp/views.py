@@ -59,9 +59,9 @@ class GetComplaints(APIView):
             complaint_list = list()
             for c in complaints:
                 if c.type == "device":
-                    complaint_list.append({"pk": c.pk, "username": c.user.user.username, "type": c.type, "device_id": c.device.device_id,"status": c.is_resolved})
+                    complaint_list.append({"pk": c.pk, "username": c.user.user.username, "type": c.type, "device_id": c.device.device_id,"status": c.is_resolved,"desc":c.desc})
                 else:
-                    complaint_list.append({"pk": c.pk, "username": c.user.user.username, "type": c.type, "status": c.is_resolved})
+                    complaint_list.append({"pk": c.pk, "username": c.user.user.username, "type": c.type, "status": c.is_resolved,"desc":c.desc})
             complaint_list = sorted(complaint_list, key = lambda i: i['pk'],reverse=True)
             complaint_list = sorted(complaint_list, key = lambda i: i['status'],reverse=False)
             message = complaint_list
