@@ -26,7 +26,7 @@ class PredictSmell(APIView):
             if request.META["HTTP_OCP_APIM_SUBSCRIPTION_KEY"] == api_key:
                 device_id = request.data["device_id"]
                 rows = request.data["rows"]
-                df = pd.DataFrame(rows, columns = ["time","temp","pres","co", "lpg", "smoke"])
+                df = pd.DataFrame(rows, columns = ['id',"time","temp","pres","co", "lpg", "smoke"])
                 # df.to_csv("datafile.csv", index = False)
                 smell_class, category = predict_class(df)
                 content={
@@ -56,4 +56,5 @@ class PredictSmell(APIView):
             "message": "Error Occurred Send Correct Data",
             }
             status = 400
+        print(content)
         return Response(data = content, status = status)
